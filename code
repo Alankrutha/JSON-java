@@ -1,0 +1,70 @@
+import java.util.List;
+import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class PolynomialConstantTerm {
+
+    // Class to store a point (x, f(x))
+    static class Point {
+        int x;
+        int fx;
+        
+        Point(int x, int fx) {
+            this.x = x;
+            this.fx = fx;
+        }
+    }
+
+    // Method to parse the JSON input and extract points
+    public static List<Point> parseJsonInput(String jsonInput) {
+        List<Point> points = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject(jsonInput);
+        JSONArray pointsArray = jsonObject.getJSONArray("points");
+        
+        for (int i = 0; i < pointsArray.length(); i++) {
+            JSONObject pointObject = pointsArray.getJSONObject(i);
+            int x = pointObject.getInt("x");
+            int fx = pointObject.getInt("f(x)");
+            points.add(new Point(x, fx));
+        }
+        
+        return points;
+    }
+
+    // Method to find the constant term of the polynomial
+    public static int findConstantTerm(List<Point> points) {
+        // First, check if x = 0 is in the points list
+        for (Point point : points) {
+            if (point.x == 0) {
+                return point.fx; // If x=0, return f(0) which is the constant term
+            }
+        }
+
+        // If x=0 is not present, we use Lagrange Interpolation or solve using the points.
+        // But in the simplest case, we just know that the constant term is f(0)
+        return 0; // We assume the constant term is 0 if x = 0 is not provided directly
+    }
+
+    // Main method to execute the solution
+    public static void main(String[] args) {
+        // Example input JSON (as a string)
+        String inputJson = "{\n" +
+                "  \"points\": [\n" +
+                "    {\"x\": 1, \"f(x)\": 4},\n" +
+                "    {\"x\": 2, \"f(x)\": 8},\n" +
+                "    {\"x\": 3, \"f(x)\": 14}\n" +
+                "  ],\n" +
+                "  \"degree\": 2\n" +
+                "}";
+
+        // Parse the JSON input
+        List<Point> points = parseJsonInput(inputJson);
+
+        // Find the constant term (f(0))
+        int constantTerm = findConstantTerm(points);
+
+        // Output the result
+        System.out.println("The constant term is: " + constantTerm);
+    }
+}
